@@ -1,8 +1,13 @@
 package com.mangkyu.stream.Quiz6;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.summingInt;
 
 public class Quiz6 {
 
@@ -33,12 +38,20 @@ public class Quiz6 {
 
     // stuArr에서 불합격(150점 미만)한 학생의 수를 남자와 여자로 구별하여라. (Boolean, List)
     public Map<Boolean, List<Student>> quiz1() {
-        return new HashMap<>();
+
+        return Arrays.stream(stuArr) // 학생 리스트에서
+                .filter(s -> s.getScore() < 150) // 150점 미만인 학생 필터링
+                .collect(groupingBy(Student::isMale));// 성별로 그룹짓는다
+        // Map< 남자여자 true false? , 조건에 따른 List<Student> >
+
     }
 
     // 각 반별 총점을 학년 별로 나누어 구하여라 (Map<Integer, Map<Integer, Integer>>)
     public Map<Integer, Map<Integer, Integer>> quiz2() {
-        return new HashMap<>();
+        return Arrays.stream(stuArr) // 학생 리스트에서
+                .collect(groupingBy(Student::getHak, // 학년끼리 그룹짓고 -> Map<학년, 학년으로 나눈 학생 List>
+                        groupingBy(Student::getBan, // 반별로 그룹지어서 -> Map<학년, Map<반, 학생리스트> >
+                                summingInt(Student::getScore)))); // 각 리스트의 합 구하기 -> Map<학년, Map<반, 총합> >
     }
 
 }
